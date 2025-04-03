@@ -102,6 +102,7 @@ Example output:
 4   | Compare and contrast classical and quantum computing.        | 26993        | 30893
 5   | Write a short story involving a robot, a dragon, and time tr | 26575        | 30551
 ```
+> Note that for the output above I was running Ollama locally with access to 32 GM of RAM, while Docker Runner Model was inside the Docker Engine that only had access to 20 GB of RAM
 
 ## Contributing
 
