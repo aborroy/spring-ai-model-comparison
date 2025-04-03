@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: spring-ai-perf
+  ai:
+    openai:
+      base-url: http://localhost:12434/engines
+      api-key: nokeyrequired
+      init:
+        pull-model-strategy: when_missing
+      chat:
+        options:
+          model: ai/qwen2.5
+    ollama:
+      base-url: http://localhost:11434
+      init:
+        pull-model-strategy: when_missing
+      chat:
+        options:
+          model: qwen2.5
+
+server:
+  port: 9999
+
+cors:
+  filter:
+    disabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
