@@ -5,13 +5,14 @@ This project demonstrates how to configure **Spring AI** to interact with two di
 - [Ollama](https://ollama.com/) running locally in Mac OS with Apple Silicon
 - [Docker Model Runner](https://docs.docker.com/desktop/features/model-runner/) running locally in Mac OS with Apple Silicon
 
-It includes a benchmarking script (`compare_chat_models.sh`) that tests both endpoints with prompts of varying complexity and measures response times, helping compare real-world latency between the two backends.
+It includes a benchmarking tools (`compare_chat_models.sh` and `model_comparison.py`) that tests both endpoints with prompts of varying complexity and measures response times, helping compare real-world latency between the two backends.
 
 ## Project Structure
 
 ```
 .
 ├── compare_chat_models.sh         # Script to benchmark model response time
+├── model_comparison.py            # Python program for detailed benchmarking
 ├── pom.xml                        
 └── src
 └── main
@@ -91,7 +92,7 @@ This script:
 - Sends them to both endpoints
 - Logs and compares response times
 
-Example output:
+Example output using **Apple M1 Pro** and **32 GB** of RAM:
 
 ```
 #   | Prompt                                                       | Ollama (ms)  | Runner (ms)
@@ -101,6 +102,75 @@ Example output:
 3   | Explain the process of photosynthesis in a few sentences.    | 3849         | 3559
 4   | Compare and contrast classical and quantum computing.        | 26993        | 30893
 5   | Write a short story involving a robot, a dragon, and time tr | 26575        | 30551
+```
+
+## A Better comparison for Model Performance
+
+### Prerequisites
+
+- Python 3
+
+### Description
+
+The Python script `model_comparison.py` enhances the shell script with more comprehensive testing and reporting features:
+
+1. Multiple Test Runs: Each prompt is executed 10 times against each backend to provide more statistically significant results
+
+2. Comprehensive Statistics:
+   - Average response time
+   - Median response time
+   - Minimum and maximum times
+   - Standard deviation
+   - Total execution time
+
+3. Data Persistence: Results are saved to a timestamped JSON file for further analysis
+
+Example output using **Apple M1 Pro** and **32 GB** of RAM and **50** rounds per prompt:
+
+```
+Overall Model Performance (ms):
+        count      mean  median  min    max       std
+Model
+Ollama    250  12103.28  3857.5  364  41027  12808.32
+Runner    250  12982.08  3614.5  306  44666  14167.79
+
+Per-Prompt Performance (average ms):
+              mean             median             min           max
+Model       Ollama    Runner   Ollama   Runner Ollama Runner Ollama Runner
+Prompt
+Prompt 1    394.42    327.60    389.5    321.5    364    306    583    541
+Prompt 2   1357.74   1288.12   1350.0   1282.0   1286   1209   1483   1399
+Prompt 3   3907.30   3677.38   3857.5   3614.5   2978   2927   5770   4885
+Prompt 4  27537.54  32745.24  27408.0  32890.0  21386  21389  35682  44666
+Prompt 5  27319.42  26872.04  26118.5  25987.5  20947  20547  41027  36809
+
+Speedup Factors (Runner vs Ollama):
+Prompt
+Prompt 1    1.20
+Prompt 2    1.05
+Prompt 3    1.06
+Prompt 4    0.84
+Prompt 5    1.02
+```
+
+* Both models show high variability, but Ollama's performance appears slightly more consistent
+* Docker Model Runner consistently outperforms Ollama on simpler prompts
+* Ollama performs better on complex content
+
+> Both models show similar minimum response times, but Runner's maximum times can be higher, particularly for analytical content. However, neither Ollama nor Docker Model Runner is clearly better overall.
+
+### Usage
+
+Run the script with Python with the Spring AI App running
+
+```bash
+python3 model_comparison.py
+```
+
+You'll need the `requests` and `pandas` libraries installed
+
+```bash
+pip install requests pandas
 ```
 
 ## Contributing

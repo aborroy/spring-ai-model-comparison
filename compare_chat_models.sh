@@ -62,8 +62,8 @@ for i in "${!PROMPTS[@]}"; do
   echo "Prompt $((i + 1)): \"$prompt\""
   echo "---------------------------------------------"
 
-  call_and_time "$OLLAMA_URL" "$prompt" "Ollama" ollama_elapsed
   call_and_time "$RUNNER_URL" "$prompt" "Docker Runner" runner_elapsed
+  call_and_time "$OLLAMA_URL" "$prompt" "Ollama" ollama_elapsed
 
   ollama_times[$i]=$ollama_elapsed
   runner_times[$i]=$runner_elapsed
