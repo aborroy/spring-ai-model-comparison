@@ -203,10 +203,10 @@ Run the script with Python with the Spring AI App running
 python3 model_comparison.py
 ```
 
-You'll need the `requests` and `pandas` libraries installed
+You'll need the `requests`, `pandas` and optionally `matplotlib` libraries installed
 
 ```bash
-pip install requests pandas
+pip install requests pandas matplotlib
 ```
 
 ## Contributing
