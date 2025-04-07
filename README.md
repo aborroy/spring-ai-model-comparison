@@ -129,36 +129,71 @@ The Python script `model_comparison.py` enhances the shell script with more comp
 Example output using **Apple M1 Pro** and **32 GB** of RAM and **50** rounds per prompt:
 
 ```
-Overall Model Performance (ms):
-        count      mean  median  min    max       std
-Model
-Ollama    250  12103.28  3857.5  364  41027  12808.32
-Runner    250  12982.08  3614.5  306  44666  14167.79
+Final Comparison Table
+#   | Prompt                                   | Metric       | Ollama          | Runner          | Ratio
+----|------------------------------------------|--------------|-----------------|-----------------|---------
+1   | What is the capital of France?           | Time (ms)    | 350.9           | 317.3           | 1.11
+    |                                          | Tokens       | 7               | 7               | 1.0
+    |                                          | Tokens/sec   | 19.98           | 22.31           | 1.12
+    |                                          | Median T/sec | 19.83           | 22.66           |
+----|------------------------------------------|--------------|-----------------|-----------------|---------
+2   | List three countries in Europe and th... | Time (ms)    | 1264.7          | 1204.3          | 1.05
+    |                                          | Tokens       | 29              | 27.9            | 1.04
+    |                                          | Tokens/sec   | 23.03           | 23.25           | 1.01
+    |                                          | Median T/sec | 23.51           | 22.69           |
+----|------------------------------------------|--------------|-----------------|-----------------|---------
+3   | Explain the process of photosynthesis... | Time (ms)    | 3967.9          | 3603.3          | 1.1
+    |                                          | Tokens       | 94.5            | 91.1            | 1.04
+    |                                          | Tokens/sec   | 23.82           | 25.25           | 1.06
+    |                                          | Median T/sec | 24.17           | 25.34           |
+----|------------------------------------------|--------------|-----------------|-----------------|---------
+4   | Compare and contrast classical and qu... | Time (ms)    | 26917.5         | 32677.6         | 0.82
+    |                                          | Tokens       | 725             | 890.4           | 0.81
+    |                                          | Tokens/sec   | 26.95           | 27.29           | 1.01
+    |                                          | Median T/sec | 27.19           | 27.33           |
+----|------------------------------------------|--------------|-----------------|-----------------|---------
+5   | Write a short story involving a robot... | Time (ms)    | 27409.9         | 26557.8         | 1.03
+    |                                          | Tokens       | 671.3           | 652.6           | 1.03
+    |                                          | Tokens/sec   | 24.47           | 24.54           | 1.0
+    |                                          | Median T/sec | 24.65           | 24.62           |
+----|------------------------------------------|--------------|-----------------|-----------------|---------
 
-Per-Prompt Performance (average ms):
-              mean             median             min           max
-Model       Ollama    Runner   Ollama   Runner Ollama Runner Ollama Runner
-Prompt
-Prompt 1    394.42    327.60    389.5    321.5    364    306    583    541
-Prompt 2   1357.74   1288.12   1350.0   1282.0   1286   1209   1483   1399
-Prompt 3   3907.30   3677.38   3857.5   3614.5   2978   2927   5770   4885
-Prompt 4  27537.54  32745.24  27408.0  32890.0  21386  21389  35682  44666
-Prompt 5  27319.42  26872.04  26118.5  25987.5  20947  20547  41027  36809
+Overall Model Performance:
+       Time (ms)                                ... Tokens/sec
+           count      mean  median  min    max  ...       mean median    min    max   std
+Model                                           ...
+Ollama        50  11982.18  4137.5  330  34216  ...      23.65  24.31  18.52  27.82  2.55
+Runner        50  12872.06  3548.5  295  39886  ...      24.53  24.68  16.28  28.47  2.13
 
-Speedup Factors (Runner vs Ollama):
+[2 rows x 15 columns]
+
+Per-Prompt Performance (Token Output Rate - tokens/sec):
+           mean        median           min           max
+Model    Ollama Runner Ollama Runner Ollama Runner Ollama Runner
 Prompt
-Prompt 1    1.20
-Prompt 2    1.05
+Prompt 1  19.98  22.31  19.83  22.66  18.52  16.28  21.21  23.73
+Prompt 2  23.03  23.25  23.51  22.68  20.95  20.60  24.60  25.09
+Prompt 3  23.82  25.25  24.17  25.34  21.11  24.13  26.27  26.24
+Prompt 4  26.95  27.29  27.19  27.33  25.63  25.85  27.82  28.47
+Prompt 5  24.47  24.54  24.65  24.62  23.51  23.93  25.17  25.50
+
+Speedup Factors (Runner vs Ollama - based on tokens/sec):
+Prompt
+Prompt 1    1.12
+Prompt 2    1.01
 Prompt 3    1.06
-Prompt 4    0.84
-Prompt 5    1.02
+Prompt 4    1.01
+Prompt 5    1.00
 ```
 
-* Both models show high variability, but Ollama's performance appears slightly more consistent
-* Docker Model Runner consistently outperforms Ollama on simpler prompts
-* Ollama performs better on complex content
+* Both systems maintain similar tokens/sec rates across prompts, where median rates are particularly close (24.31 vs 24.68)
+* Runner performs modestly better on simple queries
+* Ollama handles the complex comparison prompt (prompt 4) with fewer tokens
+* The timing differences observed (1.0-1.12 speedup factors) fall within ranges that would be imperceptible to most users in real-world applications
+* When considering the standard deviations (2.55 for Ollama, 2.13 for Runner), the performance distributions substantially overlap, suggesting the differences are not statistically significant
+* For longer prompts (4-5), the performance ratio approaches 1.0, indicating essential equivalence for sustained workloads.
 
-> Both models show similar minimum response times, but Runner's maximum times can be higher, particularly for analytical content. However, neither Ollama nor Docker Model Runner is clearly better overall.
+> The small differences observed likely represent implementation variations rather than fundamental performance advantages. From a practical standpoint, both systems deliver comparable responsiveness and throughput.
 
 ### Usage
 
